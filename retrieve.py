@@ -6,6 +6,7 @@ import pandas as pd
 
 from tqdm import tqdm
 from io import StringIO
+from os import getcwd
 from input import getTickerInput
 from dotenv import load_dotenv
 from randomdate import randome_range
@@ -31,6 +32,6 @@ for i in tqdm(range(0, int(max))):
     df = pd.read_csv(StringIO(response.text), sep=",")
 
     ## Write API Results to CSV
-    df.to_csv('workspace/src/' + str(date) + '.csv', index=False, sep=',', encoding='utf-8')
+    df.to_csv(getcwd() + "\\workspace\\src\\" + date.strftime("%m-%d-%Y+%H") + ".csv", index=False, sep=',', encoding='utf-8')
 
     pass

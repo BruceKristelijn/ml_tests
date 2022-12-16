@@ -19,7 +19,7 @@ def randome_range():
     # Make sure date is no weekend
     while(True):
         date = random_date(d1, d2)
-        dayNumber = datetime.today().weekday()
+        dayNumber = date.weekday()
 
         if dayNumber < 5:
             break
