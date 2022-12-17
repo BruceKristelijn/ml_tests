@@ -9,9 +9,14 @@ from sklearn.kernel_ridge import KernelRidge
 from os import listdir, getcwd
 from os.path import isfile, join
 
-import pickle
+import pickle, os
 import pandas as pd
 import numpy as np
+
+# Get model name
+name = input("Set model name:")
+
+# Check and create all folder
 
 # Pre create values
 x = []
@@ -20,7 +25,12 @@ y = []
 print("[Train] Getting all files.")
 
 # Get all files
-path = getcwd() + "/workspace/src/"
+path = getcwd() + "/workspace/src/" + name + "/"
+
+# Check for path or create path
+if not os.path.exists(path):
+    os.makedirs(path)
+
 files = onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
 
 for file in files:
@@ -57,6 +67,12 @@ reg = LinearRegression().fit(X_train, y_train)
 print("[Train] Score:", reg.score(X_test, y_test))
 
 print("[Train] Saving models.")
-path = getcwd() + "/workspace/saved/"
+
+path = getcwd() + "/workspace/saved/" + name + "/"
+# Check for path or create path
+if not os.path.exists(path):
+    os.makedirs(path)
+
+# Dump / save models.
 pickle.dump(krr, open(path + "kernelridge.dat", 'wb'))
 pickle.dump(reg, open(path + "linearregression.dat", 'wb'))

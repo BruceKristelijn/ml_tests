@@ -1,3 +1,5 @@
+# This is super mega temp script. Will be removed and merged later
+
 import os
 import requests
 import csv
@@ -20,16 +22,14 @@ API_KEY = os.getenv('API_KEY')
 URL = os.getenv('URL')
 
 name = input("Model / ticker name:")
-max = input("Count:")
 
-path = getcwd() + "\\workspace\\src\\" + name + "\\"
+path = getcwd() + "\\workspace\\dat\\"
 if not os.path.exists(path):
     os.makedirs(path)
 
-for i in tqdm(range(0, int(max))):
-    date = randome_range()
-    ticker = 'EURUSD' # getTickerInput()
-    querystring = {"format":'csv',"api_key":API_KEY, "start_date": date - timedelta(days=5), "end_date": date + timedelta(days=1),'interval': 'hourly', 'period': '1', 'currency': name}
+for i in tqdm(range(0, 1)):
+    date = datetime.now()
+    querystring = {"format":'csv',"api_key":API_KEY, "start_date": date - timedelta(days=6), "end_date": date -  timedelta(hours=1),'interval': 'hourly', 'period': '1', 'currency': name}
 
     response = requests.get(URL + '/timeseries', params=querystring)
     #print(response.text)
@@ -38,7 +38,7 @@ for i in tqdm(range(0, int(max))):
         df = pd.read_csv(StringIO(response.text), sep=",")
 
         ## Write API Results to CSV
-        df.to_csv(path + date.strftime("%m-%d-%Y+%H") + ".csv", index=False, sep=',', encoding='utf-8')
+        df.to_csv(path + "dat_" + name + ".csv", index=False, sep=',', encoding='utf-8')
 
         pass
     else:
@@ -47,4 +47,5 @@ for i in tqdm(range(0, int(max))):
 # Display error to be sure
 if response.ok == False:
     print("Cannot retrieve data [" + str(response.status_code) + "]. Exiting.")
+    print(response.text)
     exit()
