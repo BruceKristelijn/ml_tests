@@ -3,15 +3,13 @@ print('[Train] Starting...')
 # Import the necessary libraries
 from sklearn.model_selection import train_test_split
 # Import Random Forest Model
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LinearRegression
-from sklearn.semi_supervised import SelfTrainingClassifier
-from sklearn.svm import SVC
+from sklearn.kernel_ridge import KernelRidge
 # Import scikit-learn metrics module for accuracy calculation
-from sklearn import metrics
 from os import listdir, getcwd
 from os.path import isfile, join
 
+import pickle
 import pandas as pd
 import numpy as np
 
@@ -38,50 +36,27 @@ for file in files:
         row = df.iloc[index]
         outcome += [float(row['close'])]
 
-    # print(history)
-    # print(outcome)
-    # exit()
     y.append(history)
     x.append(outcome)
-    #y.append(np.array([100.200,23.34,32.234], dtype=np.float32))
-    #x.append(np.array([1.4,3.4,5.6], dtype=np.float32))
-
-# np_array = np.array(my_list, dtype=np.int32)
 
 X = np.array(x)
 y = np.array(y)
 
 print("[Train] Retrieved and parsed all files.")
 
-# print(type(y[0][0]))
-# exit()
-
-# print(x.shape())
-
-
 # Split dataset into training set and test set
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3) # 70% training and 30% test
 
+print("[Train] Training KernelRidge.")
+krr = KernelRidge(alpha=0.2) # Alpha can still be changed. 0.2 showed moderate results. We can use LS to validate.
+krr.fit(X_train, y_train)
+print("[Train] Score:", krr.score(X_test, y_test))
+
+print("[Train] Training LinearRegression.")
 reg = LinearRegression().fit(X_train, y_train)
-print(reg.score(X_train, y_train))
+print("[Train] Score:", reg.score(X_test, y_test))
 
-print("[Train] Predict validate.")
-df = pd.read_csv(getcwd() + '/validate3.csv', sep=',')
-#print(df.iloc[-34:]['close'])
-print(reg.predict([df.iloc[-24:]['close']]))
-exit()
-# y_pred=reg.predict(X_test)
-# print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
-# #print(reg.score(X_train, y_train))
-
-# exit()
-#Create a Gaussian Classifier
-clf=RandomForestClassifier(n_estimators=1000)
-
-#Train the model using the training sets y_pred=clf.predict(X_test)
-clf.fit(X_train,y_train)
-
-y_pred=clf.predict(X_test)
-
-# Model Accuracy, how often is the classifier correct?
-#print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+print("[Train] Saving models.")
+path = getcwd() + "/workspace/saved/"
+pickle.dump(krr, open(path + "kernelridge.dat", 'wb'))
+pickle.dump(reg, open(path + "linearregression.dat", 'wb'))
