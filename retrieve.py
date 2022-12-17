@@ -29,9 +29,17 @@ for i in tqdm(range(0, int(max))):
     response = requests.get(URL + '/timeseries', params=querystring)
     #print(response.text)
 
-    df = pd.read_csv(StringIO(response.text), sep=",")
+    if response.ok == True:
+        df = pd.read_csv(StringIO(response.text), sep=",")
 
-    ## Write API Results to CSV
-    df.to_csv(getcwd() + "\\workspace\\src\\" + date.strftime("%m-%d-%Y+%H") + ".csv", index=False, sep=',', encoding='utf-8')
+        ## Write API Results to CSV
+        df.to_csv(getcwd() + "\\workspace\\src\\" + date.strftime("%m-%d-%Y+%H") + ".csv", index=False, sep=',', encoding='utf-8')
 
-    pass
+        pass
+    else:
+        break
+
+# Display error to be sure
+if response.ok == False:
+    print("Cannot retrieve data [" + str(response.status_code) + "]. Exiting.")
+    exit()

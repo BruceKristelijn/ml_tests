@@ -1,17 +1,25 @@
+print('[Train] Starting...')
+
 # Import the necessary libraries
 from sklearn.model_selection import train_test_split
 # Import Random Forest Model
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LinearRegression
+from sklearn.semi_supervised import SelfTrainingClassifier
+from sklearn.svm import SVC
 # Import scikit-learn metrics module for accuracy calculation
 from sklearn import metrics
 from os import listdir, getcwd
 from os.path import isfile, join
 
 import pandas as pd
+import numpy as np
 
 # Pre create values
 x = []
 y = []
+
+print("[Train] Getting all files.")
 
 # Get all files
 path = getcwd() + "/workspace/src/"
@@ -22,7 +30,7 @@ for file in files:
     outcome = []
 
     df = pd.read_csv(path + file, sep=',')
-    for index in df.iloc[:-24].index:
+    for index in df.iloc[-34:-24].index:
         row = df.iloc[index]
         history += [float(row['close'])]
 
@@ -35,15 +43,38 @@ for file in files:
     # exit()
     y.append(history)
     x.append(outcome)
+    #y.append(np.array([100.200,23.34,32.234], dtype=np.float32))
+    #x.append(np.array([1.4,3.4,5.6], dtype=np.float32))
+
+# np_array = np.array(my_list, dtype=np.int32)
+
+X = np.array(x)
+y = np.array(y)
+
+print("[Train] Retrieved and parsed all files.")
 
 # print(type(y[0][0]))
 # exit()
 
 # print(x.shape())
 
+
 # Split dataset into training set and test set
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3) # 70% training and 30% test
 
+reg = LinearRegression().fit(X_train, y_train)
+print(reg.score(X_train, y_train))
+
+print("[Train] Predict validate.")
+df = pd.read_csv(getcwd() + '/validate3.csv', sep=',')
+#print(df.iloc[-34:]['close'])
+print(reg.predict([df.iloc[-24:]['close']]))
+exit()
+# y_pred=reg.predict(X_test)
+# print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+# #print(reg.score(X_train, y_train))
+
+# exit()
 #Create a Gaussian Classifier
 clf=RandomForestClassifier(n_estimators=1000)
 
@@ -53,4 +84,4 @@ clf.fit(X_train,y_train)
 y_pred=clf.predict(X_test)
 
 # Model Accuracy, how often is the classifier correct?
-print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
+#print("Accuracy:",metrics.accuracy_score(y_test, y_pred))
