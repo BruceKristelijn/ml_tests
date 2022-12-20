@@ -22,7 +22,7 @@ name = input("Set model name:")
 x = []
 y = []
 
-print("[Train] Getting all files.")
+print("[Train] Getting all files for " + name)
 
 # Get all files
 path = getcwd() + "/workspace/src/" + name + "/"
