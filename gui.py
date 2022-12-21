@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 from os import listdir, getcwd
 from os.path import isfile, join
+from sys import platform
 
 # Load env variables
 load_dotenv()
@@ -28,6 +29,10 @@ layout = [
             [sg.Text('Avalible history: []', key='-DATACOUNT-'), sg.Button('Re-train')],
             [sg.Button('Predict'), sg.Button('Retrieve last')] ]
 
+python = 'python'
+if platform == "darwin":
+    python = 'python3'
+
 # Create the Window
 window = sg.Window('FOREX Prediction', layout)
 # Event Loop to process "events" and get the "values" of the inputs
@@ -40,15 +45,15 @@ while True:
         updateWindow(window)
 
     if event == 'Re-train':
-        child = subprocess.Popen(['python', 'train.py'], stdin=subprocess.PIPE)
+        child = subprocess.Popen([python, 'train.py'], stdin=subprocess.PIPE)
         child.communicate(input=TICKER.encode('utf-8'))
 
     if event == 'Retrieve last':
-        child = subprocess.Popen(['python', 'retrieve_last.py'], stdin=subprocess.PIPE)
+        child = subprocess.Popen([python, 'retrieve_last.py'], stdin=subprocess.PIPE)
         child.communicate(input=TICKER.encode('utf-8'))
 
     if event == 'Predict' or event == 'Retrieve last':
-        child = subprocess.Popen(['python', 'predict.py'], stdin=subprocess.PIPE)
+        child = subprocess.Popen([python, 'predict.py'], stdin=subprocess.PIPE)
         child.communicate(input=TICKER.encode('utf-8'))
         child.communicate(input=b'Y')
 
