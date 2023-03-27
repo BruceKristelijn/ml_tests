@@ -13,6 +13,7 @@ from input import getTickerInput
 from dotenv import load_dotenv
 from randomdate import randome_range
 from datetime import datetime, timedelta
+from pathlib import Path, PurePath
 
 # Load env variables
 load_dotenv()
@@ -23,7 +24,7 @@ URL = os.getenv('URL')
 
 name = input("Model / ticker name:")
 
-path = getcwd() + "\\workspace\\dat\\"
+path = PurePath(getcwd(), "workspace", "dat")
 if not os.path.exists(path):
     os.makedirs(path)
 
@@ -38,7 +39,7 @@ for i in tqdm(range(0, 1)):
         df = pd.read_csv(StringIO(response.text), sep=",")
 
         ## Write API Results to CSV
-        df.to_csv(path + "dat_" + name + ".csv", index=False, sep=',', encoding='utf-8')
+        df.to_csv(PurePath(path, "dat_" + name + ".csv"), index=False, sep=',', encoding='utf-8')
 
         pass
     else:
